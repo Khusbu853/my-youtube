@@ -1,0 +1,204 @@
+step1:- we are using 'npx create-react-app my-youtube'
+
+step2:- we install tailwind css in our app
+command: -npm install -D tailwindcss
+        -npx tailwindcss init
+
+Note:- we don't need postcss here, create-react-app will take care of this
+
+step3:- first build header using tailwindcss
+
+step4:- after that i build sidebar
+
+step5:- now, i want to make a functionality that when we click on hamburger, sidebar will close or open
+we want this functionality on each page, across our whole app.
+
+so, i manage my state in global space using redux.
+
+step6:- - npm i @reduxjs/toolkit
+        - npm i react-redux
+
+1) let's create utils folder, and store inside it.
+2) Create appSlice
+3) provide store to your app.js
+4) attach an onClick event to hamburger menu, and dispatch an action, in header.js
+5) now subscribe to the store using useSlector, inside Sidebar.js
+
+step7:- build button in the MainContainer
+
+step8:- start making VideoContainer
+- fetching the data from the youtube video api's(popular one)
+- generate api key using youtube video api auth
+- pass video as a prop in the VideoCard component.
+
+step9:- creating routing for the links using react-router-don in:- App.js and Body.js and connect it with VideoContainer.js
+
+step10:- build the WatchPage.js
+when user click on any video it will go to /watch page
+
+- First dispatch the action closeMenu() inside useEffect, means when user redirect on /watch page, sidebar will close, 
+- using useSearchParams(),   
+   console.log(searchParam.get("v"));   //we get the id of the video by doing this
+- then display the video using youtube iframe.
+
+
+
+step11:- build search functionality using the concept of debouncing.
+- Debouncing:-
+
+typing slow = 200ms
+typing fast = 30ms
+
+performance:
+- iphone pro max = 14 letter * 1000 = 140000
+- with debouncing = 3 API calls * 1000 = 3000
+
+Debouncing with 200ms :- 
+- if difference between 2 key strokes is less than 200ms - DECLINE API call
+- if difference greater than 200ms make an API call.
+
+**NOTE:- Try to make the api call as less as possible.
+
+
+steps:- 
+- get an youtube autocomple search api(in json format)
+- when we make an api call for search input in header.js, what will happen:-
+
+*********(key - i
+- render the component
+- useEffect()
+- start timer => make api call after 200ms
+
+key - ip 
+- destroy the component(useEffect return method)
+- re-render the component
+- useEffect()
+- start timer => make an api call after 200ms
+
+
+setTimeout(200) - make an api call)***************
+
+- map over the suggestions, and display it.
+- add onFocus() event handler to input, so that when we moe out our cursor out search suggestion disappear, 
+
+
+stpe12:- 
+Let's build the cached feature(means once we search for anything, again if serch for this it  will not make an api call)
+
+- when i search for anything, it will store the search result of api call into my redux store, and everytime when I search for the same 
+result once again, it should not make an api call again for the same search.
+
+
+*****Cache:
+if we store our search result in:-
+- time complexity to search in array = O(n)
+- time complexity to search in object = O(1)
+
+- make searchSlice.js in utils.js
+so, here we will use object, to store the result, so i keep an empty object as the initialState inside redux store.
+- Now in header.json:- if search is present in the cache, will do 'setSuggestions(searchCache[searchQuery])' otherwise, we will make an api call
+and update the cache.
+
+**NOTE:- our serach has following functionality:
+1. Live api
+2. Debouncing
+3. Caching
+
+
+
+***Very Important
+step12:- Let's make n-level nested comment section.
+- Make a CommentContainer.js and add this in WatchPage.js
+- In CommentContainer.js, make the dummy data(list of nested objects)
+- Pass the commentData to the CommentList component.
+- map over the commentData, and pass each comment as a prop to the Comments component.
+
+- Now i want to display my replies:- Using Recursion, (Recursing the component in itself), see CommentsList component in Comments.js file
+
+
+
+step13:- Let's build live chat
+** LiveChat >>>>> Infinite scroll >>>>>> Pagination
+
+Application in which live data is used(live data change):- Live chat, gmail, cricbuzz(live commentry), Zeroda(stock market)
+(something changing on page live) we can handle it by two ways:-
+
+Challenges in making this:-
+- how to get the Data live(In data layer)
+- How to update the UI(In UI layer)
+
+
+DATA(Live):-
+1) Using Web Sockets(It is a two way connection established, it's kind of like handshake between a server and a UI)
+    (UI 🤝 Server) When the handshake between Ui and the server established, we can quickly sends the data from either side.
+    (Bi-directional live data)(can send the data from UI to backend or Backend to UI)(no regular interval)
+    - we have to use Web Sockets(when building stock market application, Whatsapp)
+
+2) Using API Polling(UI request the data from the server, data coming from server to UI, one way connection, after an interval)
+Here we will check after some interval that, the new data is coming or not.
+We can do API POLLING(when building Gmail like application, in cricbuzz(cricket commentry))
+***Note:- Youtube also using API Polling
+
+
+UI(UI update):-
+-Why their page not freezes-up or blot:-  Because, as soon as the messages explodes from a certain number it quickly deletes it from your page.
+
+
+Steps to build live-chat:-
+- In WatchPage.js import LiveChat.js component.
+- In LiveChat.js, we will do API polling inside useEffect, after every 1000ms
+- once i will get the data, i want to update my chats, (where i have to append my chats),
+ we will be using the power of redux to update the chats, let's create:
+- chatSlice.js
+- add slice into the store.js
+- dispatch the action into the LiveChat.js(API POLLING)
+
+Now for data we made helper.js components in utils, and copy data from net.
+
+Now i also want to do chat:-
+- made input box and send button,
+- wrap it inside form, and attach onSubmit event, which will dispatch an action(addMessage),
+
+
+
+****** Some Other Hooks *********
+- useMemo:- Increase the performance of the app.
+useMemo is a React Hook that lets you cache the result of a calculation between re-renders.
+- every time when the state changes the component re-renders, it will make an api call, so this is the costly operation, we want to optimize it.
+
+useMemo(fn,dependencies), takes two argument:- 1. the function that need to be memoized  2. dependencies
+**Until the dependencies changed cached the result.
+-- See Demo.js file
+
+
+- useCallback():- It is a React Hook that lets you cache a function definition between re-renders.
+
+
+- useRef is a React Hook that lets you reference a value that’s not needed for rendering.
+Why it is used?
+If you want to store some data in a variable, and do not want to re-render it, 
+-See Demo2.js
+
+**Note:- when the state variable increases, the component will re-render and it will refresh the let x=0 variable, 
+while keeping their state as it is.
+
+UseRef:- I want a variable which is not getting refreshed when the re-render happens, while keeping their state as it is.
+- When we create useRef(), it comes as an object with a current hardcoded inside it.
+// not like => ref = 0
+// ref = {current: 0}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
